@@ -44,12 +44,17 @@ jobs:
           echo "::group::nix build .#$pkg with VIDPID=Yubikey5"
           out="$(nix build ".#$pkg" --impure --no-link --print-out-paths)"
           
+          cp "$out/$pkg.elf" "dist/rs-key-yubikey5-strong-pin-pqc.elf"
           cp "$out/$pkg.uf2" "dist/rs-key-yubikey5-strong-pin-pqc.uf2"
+          echo "::group::artifact sha256"
+          sha256sum dist/*
+          echo "::endgroup::"
           echo "::endgroup::"
 
       - name: Upload firmware artifact
         uses: actions/upload-artifact@v4
         with:
           name: rs-key-yubikey5-firmware
-          path: dist/*.uf2
+          path: dist/*
           retention-days: 7
+
